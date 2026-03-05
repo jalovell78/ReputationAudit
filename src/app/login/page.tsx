@@ -37,6 +37,11 @@ export default function LoginPage() {
                         <div className="space-y-2">
                             <Label htmlFor="password" className="text-zinc-300">Password</Label>
                             <Input id="password" name="password" type="password" required className="bg-zinc-900 border-zinc-700 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-zinc-600" />
+                            <div className="text-right">
+                                <a href="/forgot-password" className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors">
+                                    Forgot password?
+                                </a>
+                            </div>
                         </div>
                         {error && (
                             <p className="text-red-400 text-sm mt-2">{error}</p>
