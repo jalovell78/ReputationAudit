@@ -4,7 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 
-export async function login(formData: FormData) {
+export async function login(formData: FormData): Promise<{ error: string } | void> {
     const supabase = await createClient()
 
     const data = {
@@ -15,14 +15,14 @@ export async function login(formData: FormData) {
     const { error } = await supabase.auth.signInWithPassword(data)
 
     if (error) {
-        redirect('/login?error=' + encodeURIComponent(error.message))
+        return { error: error.message }
     }
 
     revalidatePath('/dashboard')
     redirect('/dashboard')
 }
 
-export async function signup(formData: FormData) {
+export async function signup(formData: FormData): Promise<{ error: string } | void> {
     const supabase = await createClient()
 
     const data = {
@@ -33,7 +33,7 @@ export async function signup(formData: FormData) {
     const { data: authData, error } = await supabase.auth.signUp(data)
 
     if (error) {
-        redirect('/login?error=' + encodeURIComponent(error.message))
+        return { error: error.message }
     }
 
     // Ensure a profiles row exists for this new user so RLS policies don't fail
