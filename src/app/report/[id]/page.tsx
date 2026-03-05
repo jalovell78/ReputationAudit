@@ -2,11 +2,19 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Sparkles, Loader2, AlertCircle } from "lucide-react";
+import { ArrowLeft, Sparkles, Loader2, AlertCircle, Target } from "lucide-react";
 import Link from "next/link";
 import ReactMarkdown from 'react-markdown';
+import { PerceptionGapChart } from "./PerceptionGapChart";
+
+const GOAL_LABELS: Record<string, string> = {
+    career_progression: "Career Progression",
+    leadership_mastery: "Leadership Mastery",
+    personal_growth: "Personal Growth",
+    social_intelligence: "Social Intelligence",
+};
 
 export default function ReportPage() {
     const params = useParams();
@@ -17,6 +25,9 @@ export default function ReportPage() {
 
     const [loading, setLoading] = useState(true);
     const [reportData, setReportData] = useState<string | null>(null);
+    const [perceptionGap, setPerceptionGap] = useState<Record<string, { self: number | null; raters: number | null }> | null>(null);
+    const [hasPerceptionData, setHasPerceptionData] = useState(false);
+    const [goalLabel, setGoalLabel] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
@@ -25,21 +36,19 @@ export default function ReportPage() {
                 const res = await fetch(`/api/generate-report/${auditId}`);
                 const data = await res.json();
 
-                if (!res.ok) {
-                    throw new Error(data.error || "Failed to load report");
-                }
+                if (!res.ok) throw new Error(data.error || "Failed to load report");
 
                 setReportData(data.report);
+                setPerceptionGap(data.perceptionGap ?? null);
+                setHasPerceptionData(data.hasPerceptionData ?? false);
+                setGoalLabel(data.goalLabel ?? null);
             } catch (err: any) {
                 setError(err.message);
             } finally {
                 setLoading(false);
             }
         }
-
-        if (auditId) {
-            fetchReport();
-        }
+        if (auditId) fetchReport();
     }, [auditId]);
 
     return (
@@ -48,7 +57,18 @@ export default function ReportPage() {
                 <Link href="/dashboard" className="text-zinc-500 hover:text-white flex items-center gap-2 text-sm transition-colors">
                     <ArrowLeft className="w-4 h-4" /> Back to Dashboard
                 </Link>
-                {isSuccess && <span className="text-xs bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-3 py-1 rounded-full">Payment Successful</span>}
+                <div className="flex items-center gap-2">
+                    {goalLabel && (
+                        <span className="text-xs bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 px-3 py-1 rounded-full flex items-center gap-1">
+                            <Target className="w-3 h-3" /> {goalLabel}
+                        </span>
+                    )}
+                    {isSuccess && (
+                        <span className="text-xs bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-3 py-1 rounded-full">
+                            Payment Successful
+                        </span>
+                    )}
+                </div>
             </div>
 
             {loading && !error && (
@@ -57,7 +77,7 @@ export default function ReportPage() {
                         <Loader2 className="w-12 h-12 text-zinc-500 animate-spin" />
                         <Sparkles className="w-5 h-5 text-emerald-400 absolute -top-2 -right-2 animate-pulse" />
                     </div>
-                    <p className="text-zinc-400 animate-pulse text-lg">Synthesizing 5-dimensional feedback into your Reputation Audit...</p>
+                    <p className="text-zinc-400 animate-pulse text-lg">Synthesizing feedback into your Reputation Audit...</p>
                 </div>
             )}
 
@@ -81,6 +101,27 @@ export default function ReportPage() {
                         </h1>
                         <p className="text-zinc-400 text-lg">Your AI-synthesized 360-degree Reputation Audit.</p>
                     </div>
+
+                    {/* Perception Gap Radar Chart — only if self-audit was completed */}
+                    {perceptionGap && hasPerceptionData && (
+                        <PerceptionGapChart perceptionGap={perceptionGap} />
+                    )}
+
+                    {/* Prompt to complete self-audit if not done */}
+                    {!hasPerceptionData && (
+                        <div className="mb-8 p-4 bg-indigo-500/10 border border-indigo-500/20 rounded-xl text-sm text-indigo-300 flex items-center justify-between gap-4">
+                            <div>
+                                <strong className="text-indigo-200">Unlock your Perception Gap chart!</strong>
+                                <p className="text-indigo-400 mt-0.5">Complete the Self-Audit to see how your scores compare to your raters'.</p>
+                            </div>
+                            <Link
+                                href={`/dashboard/self-audit/${auditId}`}
+                                className="shrink-0 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors"
+                            >
+                                Start Self-Audit
+                            </Link>
+                        </div>
+                    )}
 
                     <Card className="bg-zinc-900 border-zinc-800 shadow-2xl relative overflow-hidden">
                         <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none -translate-y-1/2 translate-x-1/3" />

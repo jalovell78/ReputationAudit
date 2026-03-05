@@ -5,22 +5,21 @@ export async function POST(req: Request) {
     try {
         const supabase = await createClient();
 
-        // Ensure user is authenticated
         const { data: { user }, error: authError } = await supabase.auth.getUser();
         if (authError || !user) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
-        const { raters } = await req.json();
+        const { raters, goalType } = await req.json();
 
-        if (!Array.isArray(raters) || raters.length !== 5) {
-            return NextResponse.json({ error: 'Exactly 5 raters are required.' }, { status: 400 });
+        if (!Array.isArray(raters) || raters.length < 1 || raters.length > 20) {
+            return NextResponse.json({ error: 'Between 1 and 20 raters are required.' }, { status: 400 });
         }
 
-        // 1. Create the Parent Audit Record
+        // 1. Create the Parent Audit Record — include goal_type if provided
         const { data: audit, error: auditErr } = await supabase
             .from('audits')
-            .insert({ user_id: user.id, status: 'in_progress' })
+            .insert({ user_id: user.id, status: 'in_progress', goal_type: goalType ?? null })
             .select()
             .single();
 
@@ -30,11 +29,12 @@ export async function POST(req: Request) {
         const entriesToInsert = raters.map(r => ({
             audit_id: audit.id,
             archetype: r.archetype,
+            archetype_group: r.archetype_group ?? r.archetype,
             rater_name: r.name,
             rater_email: r.email,
         }));
 
-        // 3. Insert all 5 feedback_entries. The DB default gen_random_uuid() handles generating the rater_link_id.
+        // 3. Insert all feedback_entries. DB default gen_random_uuid() handles rater_link_id.
         const { error: entriesErr } = await supabase
             .from('feedback_entries')
             .insert(entriesToInsert);
