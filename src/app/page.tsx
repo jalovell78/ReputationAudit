@@ -27,11 +27,11 @@ export default function Home() {
         </span>
 
         <h1 className="relative text-5xl md:text-7xl font-black tracking-tighter leading-none mb-6 max-w-4xl bg-gradient-to-br from-white via-zinc-200 to-zinc-500 bg-clip-text text-transparent">
-          What do people <em className="not-italic text-emerald-400">really</em> think of you?
+          The Shortcut to <em className="not-italic text-emerald-400">Radical</em> Self-Improvement
         </h1>
 
         <p className="relative text-lg md:text-xl text-zinc-400 max-w-xl leading-relaxed mb-10">
-          Collect radical, anonymous 360° feedback from your peers, team, and stakeholders. An AI synthesizes the truth into a report you can't unsee.
+          Gain the deep, anonymous insights you need to grow in every area of life—from your career to your closest relationships. Collect honest and effective feedback from colleagues, family, and friends.
         </p>
 
         <div className="relative flex flex-col sm:flex-row items-center gap-4">
@@ -42,7 +42,6 @@ export default function Home() {
             Start Your Audit
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
           </Link>
-          <span className="text-zinc-500 text-sm">No credit card required to start.</span>
         </div>
       </section>
 
@@ -57,7 +56,7 @@ export default function Home() {
               icon: <Zap className="w-5 h-5 text-emerald-400" />,
               step: "01",
               title: "Nominate your raters",
-              desc: "Choose up to 5 people — managers, peers, direct reports, even difficult clients. We generate anonymous links so they can speak freely.",
+              desc: "Choose up to 20 people who know you best—colleagues, close friends, family members, or even your toughest clients. We generate secure, anonymous links so they can speak freely.",
             },
             {
               icon: <Eye className="w-5 h-5 text-emerald-400" />,
@@ -69,7 +68,7 @@ export default function Home() {
               icon: <ShieldCheck className="w-5 h-5 text-emerald-400" />,
               step: "03",
               title: "Receive The Radical Truth",
-              desc: "Unlock your AI-synthesized report — a forensic, 360° reputation audit that shows you exactly how you are perceived by the world.",
+              desc: "Unlock your AI-synthesized report—a forensic reputation audit that shows you exactly how you are perceived and provides a clear roadmap for self-improvement.",
             },
           ].map((item) => (
             <div

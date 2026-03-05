@@ -29,14 +29,14 @@
 - **Paywall and Teaser**: Unpaid users see a blurred teaser (first ~150 words) and an "Unlock Full Report" button. Paid users access the full document.
 - **Authentication & Security**: Complete Auth flow with Clerk/Supabase, including a recent robust password reset flow.
 - **Dashboard UI Enhancements**: Active audits display their selected goal badge, progress counters, and appropriate call-to-action buttons. Setup wizard validates for at least 3 valid emails before launching.
+- **Rater Context & Clarity**: The feedback form now displays the subject's name and primary goal, providing context through multi-stage descriptions and a centered anonymity guarantee. It also provides both positive and negative prompt examples.
+- **Improved Auth Flow**: Added the ability for users to capture their Full Name during registration and more importantly, added a secure Logout functionality to the dashboard.
 
 ## Active Issues
 - No critical bugs currently logged. The recent UI state issues on `SetupWizard.tsx` (stale state on dropdowns, broken rendering on Step 2 navigation) were fully resolved and validated.
 - **Pending verification**: Ensure the newly implemented minimum 3 email validation and dashboard goal badges operate correctly in the Vercel production environment post-deployment.
 
 ## Next Iteration
-*Currently awaiting user direction based on the resolved feature blocks.*
-*Potential next steps could involve:*
-- Finalizing perception gap deep-dive insights.
-- Expanding the AI actionable steps logic based on specific goal + data intersections.
-- Polish email notification templates for raters.
+- [ ] Finalizing perception gap deep-dive insights (AI synthesis of the Radar Chart data).
+- [ ] Expanding the AI actionable steps logic based on specific goal + data intersections.
+- [ ] Polish email notification templates for raters.
