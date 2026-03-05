@@ -2,13 +2,6 @@ import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
 
-// Stripe requires the raw body to construct the event
-export const config = {
-    api: {
-        bodyParser: false,
-    },
-};
-
 export async function POST(req: Request) {
     const stripeKey = process.env.STRIPE_SECRET_KEY;
     const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
