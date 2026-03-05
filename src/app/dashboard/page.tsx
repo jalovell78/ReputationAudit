@@ -60,6 +60,11 @@ export default async function DashboardPage() {
                                         <div>
                                             <CardTitle className="text-xl flex items-center gap-2">
                                                 Audit Request
+                                                {audit.goal_type && (
+                                                    <Badge variant="outline" className="border-indigo-500/30 text-indigo-400 bg-indigo-500/10 hover:bg-indigo-500/20">
+                                                        {audit.goal_type.split('_').map((word: string) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
+                                                    </Badge>
+                                                )}
                                                 {isUnlocked && <Badge className="bg-emerald-500 text-black hover:bg-emerald-400">UNLOCKED</Badge>}
                                             </CardTitle>
                                             <CardDescription className="text-zinc-400 mt-1">
