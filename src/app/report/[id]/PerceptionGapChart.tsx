@@ -97,9 +97,9 @@ export function PerceptionGapChart({ perceptionGap }: PerceptionGapChartProps) {
                             contentStyle={{ backgroundColor: "#18181b", border: "1px solid #3f3f46", borderRadius: "8px" }}
                             labelStyle={{ color: "#f4f4f5", fontWeight: "bold" }}
                             itemStyle={{ color: "#a1a1aa" }}
-                            formatter={(value: any, name: string) => [
+                            formatter={(value: any, name: string | undefined) => [
                                 value !== undefined ? `${value}/5` : "N/A",
-                                name,
+                                name ?? "",
                             ]}
                         />
                         <Legend
