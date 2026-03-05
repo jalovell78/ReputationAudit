@@ -31,6 +31,10 @@ export default function LoginPage() {
                 <CardContent>
                     <form action={(formData) => handleAction(login, formData)} className="space-y-4">
                         <div className="space-y-2">
+                            <Label htmlFor="fullName" className="text-zinc-300">Full Name <span className="text-zinc-500 text-xs font-normal">(required for new accounts)</span></Label>
+                            <Input id="fullName" name="fullName" type="text" className="bg-zinc-900 border-zinc-700 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-zinc-600" />
+                        </div>
+                        <div className="space-y-2">
                             <Label htmlFor="email" className="text-zinc-300">Email</Label>
                             <Input id="email" name="email" type="email" required className="bg-zinc-900 border-zinc-700 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-zinc-600" />
                         </div>

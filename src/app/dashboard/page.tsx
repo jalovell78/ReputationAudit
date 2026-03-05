@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { CheckoutButton } from "./CheckoutButton";
+import { LogoutButton } from "./LogoutButton";
 
 export default async function DashboardPage() {
     const supabase = await createClient();
@@ -27,9 +28,12 @@ export default async function DashboardPage() {
                     <h1 className="text-4xl font-bold tracking-tight mb-2">My Reputation Audits</h1>
                     <p className="text-zinc-400">Manage your active and completed 360-degree reviews.</p>
                 </div>
-                <Link href="/dashboard/setup">
-                    <Button className="bg-white text-black hover:bg-zinc-200">Start New Audit</Button>
-                </Link>
+                <div className="flex items-center gap-3">
+                    <LogoutButton />
+                    <Link href="/dashboard/setup">
+                        <Button className="bg-white text-black hover:bg-zinc-200">Start New Audit</Button>
+                    </Link>
+                </div>
             </div>
 
             <div className="max-w-4xl mx-auto space-y-6">

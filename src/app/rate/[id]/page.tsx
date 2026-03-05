@@ -8,7 +8,15 @@ export default async function RatePage({ params }: { params: { id: string } }) {
 
     const { data: entry } = await supabase
         .from("feedback_entries")
-        .select("*")
+        .select(`
+            *,
+            audits (
+                goal_type,
+                profiles (
+                    full_name
+                )
+            )
+        `)
         .eq("rater_link_id", id)
         .single();
 
@@ -24,6 +32,10 @@ export default async function RatePage({ params }: { params: { id: string } }) {
             </div>
         );
     }
+
+    const audit = entry.audits as any;
+    const subjectName = audit?.profiles?.full_name || "the subject";
+    const goalType = audit?.goal_type || null;
 
     if (entry.status === "submitted") {
         return (
@@ -57,7 +69,12 @@ export default async function RatePage({ params }: { params: { id: string } }) {
 
     return (
         <div className="min-h-screen bg-zinc-950 flex items-center justify-center p-4 selection:bg-zinc-800">
-            <FeedbackForm id={id} archetype={entry.archetype} />
+            <FeedbackForm
+                id={id}
+                archetype={entry.archetype}
+                subjectName={subjectName}
+                goalType={goalType}
+            />
         </div>
     );
 }

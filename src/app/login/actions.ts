@@ -25,9 +25,18 @@ export async function login(formData: FormData): Promise<{ error: string } | voi
 export async function signup(formData: FormData): Promise<{ error: string } | void> {
     const supabase = await createClient()
 
+    const email = formData.get('email') as string
+    const password = formData.get('password') as string
+    const fullName = formData.get('fullName') as string | null
+
     const data = {
-        email: formData.get('email') as string,
-        password: formData.get('password') as string,
+        email,
+        password,
+        options: {
+            data: {
+                full_name: fullName
+            }
+        }
     }
 
     const { data: authData, error } = await supabase.auth.signUp(data)
@@ -40,10 +49,18 @@ export async function signup(formData: FormData): Promise<{ error: string } | vo
     if (authData.user) {
         await supabase.from('profiles').upsert({
             id: authData.user.id,
-            email: authData.user.email
+            email: authData.user.email,
+            full_name: fullName
         }, { onConflict: 'id' });
     }
 
     revalidatePath('/dashboard')
     redirect('/dashboard')
+}
+
+export async function logout() {
+    const supabase = await createClient()
+    await supabase.auth.signOut()
+    revalidatePath('/')
+    redirect('/login')
 }
