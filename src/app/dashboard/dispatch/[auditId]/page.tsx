@@ -17,6 +17,17 @@ export default async function DispatchHubPage({ params }: { params: { auditId: s
         .eq("audit_id", auditId)
         .order("created_at", { ascending: true });
 
+    const { data: audit } = await supabase
+        .from("audits")
+        .select(`
+            goal_type,
+            profiles (
+                full_name
+            )
+        `)
+        .eq("id", auditId)
+        .single();
+
     if (!entries || entries.length === 0) {
         return <div className="p-12 text-white">Audit not found or access denied.</div>;
     }
@@ -34,7 +45,11 @@ export default async function DispatchHubPage({ params }: { params: { auditId: s
                     </p>
                 </div>
 
-                <DispatchHubList entries={entries} />
+                <DispatchHubList
+                    entries={entries}
+                    goalType={audit?.goal_type}
+                    userName={((audit?.profiles as any)?.full_name || "")?.split(' ')[0]}
+                />
             </div>
         </div>
     );

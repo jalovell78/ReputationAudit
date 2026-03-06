@@ -1,13 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { CopyIcon, MailIcon, CheckIcon } from "lucide-react";
+import { getRaterEmailTemplate } from "@/lib/emailTemplates";
 
-export function DispatchHubList({ entries }: { entries: any[] }) {
+export function DispatchHubList({ entries, goalType, userName }: { entries: any[], goalType?: string, userName?: string }) {
     const [copiedId, setCopiedId] = useState<string | null>(null);
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     const handleCopy = async (id: string, url: string) => {
         await navigator.clipboard.writeText(url);
@@ -16,18 +22,28 @@ export function DispatchHubList({ entries }: { entries: any[] }) {
     };
 
     const getMailtoLink = (entry: any, url: string) => {
-        const subject = encodeURIComponent("I need your radical honesty - The Reputation Audit");
-        const body = encodeURIComponent(`Hi ${entry.rater_name},\n\nI'm conducting a 360-degree Reputation Audit on myself. I've selected you to provide feedback as a '${entry.archetype}'. \n\nThis platform uses AI to completely sanitize your writing style, syntax, and any identifiable slang, ensuring your response is 100% anonymous before I ever see it. I just want the hard truth.\n\nPlease submit your feedback here: ${url}\n\nThank you.`);
+        const template = getRaterEmailTemplate(
+            goalType,
+            entry.archetype_group || entry.archetype,
+            entry.rater_name,
+            url,
+            userName
+        );
+
+        const subject = encodeURIComponent(template.subject);
+        const body = encodeURIComponent(template.body);
         return `mailto:${entry.rater_email}?subject=${subject}&body=${body}`;
     };
 
     return (
         <div className="space-y-6">
             {entries.map((entry) => {
-                // Build the unique sharing URL for this rater entry
-                const shareUrl = typeof window !== 'undefined'
-                    ? `${window.location.origin}/rate/${entry.rater_link_id}`
-                    : `https://reputation-audit.vercel.app/rate/${entry.rater_link_id}`;
+                // Use a stable base URL for SSR to prevent hydration mismatch
+                const baseUrl = mounted && typeof window !== 'undefined'
+                    ? window.location.origin
+                    : 'https://reputation-audit.vercel.app';
+
+                const shareUrl = `${baseUrl}/rate/${entry.rater_link_id}`;
 
                 return (
                     <div key={entry.id} className="p-5 rounded-lg bg-zinc-900 border border-zinc-800 flex flex-col gap-4">
