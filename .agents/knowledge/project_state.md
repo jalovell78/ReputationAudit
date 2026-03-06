@@ -4,49 +4,39 @@
 - **Framework**: Next.js 15 (App Router, Turbopack)
 - **Authentication**: Supabase Auth (Server & Client)
 - **Database**: Supabase (PostgreSQL) with Row Level Security (RLS)
+- **AI Synthesis**: Google GenAI (Gemini 2.0 Flash)
 - **Styling**: Tailwind CSS + shadcn/ui (Dark Mode focused)
 - **Payments**: Stripe Integration (Checkout & Webhooks)
 - **Icons**: Lucide React
 - **File Structure**:
   - `src/app/`: Core routing and page components.
   - `src/components/ui/`: Reusable shadcn/ui components.
-  - `src/lib/supabase/`: Supabase client initialization (server/client/middleware).
+  - `src/lib/supabase/`: Supabase client initialization.
   - `src/lib/emailTemplates.ts`: Core matrix of 30 relationship-aware email templates.
   - `supabase/migrations/`: Database schema and RLS policies.
   - `.agents/knowledge/`: Persistent project documentation (Knowledge Items).
 
 ## Completed Features
-- **User Authentication**:
-  - Secure signup with Full Name capture.
-  - Integrated login and logout functionality on the dashboard.
-- **Dashboard UI**:
-  - Overview of active and completed audits.
-  - Real-time progress tracking for rater responses.
-  - Integrated "Start New Audit" flow.
-- **Audit Setup Wizard**:
-  - **Step 1**: Objective selection (e.g., Leadership, Social Intelligence).
-  - **Step 2**: Rater nomination (up to 20 emails).
-- **Rater Feedback Interface**:
-  - Dynamic display of Subject Name and Development Goal for context.
-  - Centered Anonymity Guarantee ("Your identity is strictly masked").
-  - Guided feedback via positive and negative prompt examples.
-  - Vertical spacing and high-contrast UI polish.
-- **Dispatch Hub (Rater Invitations)**:
-  - **Dynamic Template Matrix**: 30 unique, relationship-aware email templates (5 Goals x 6 Roles) implemented in `src/lib/emailTemplates.ts`.
-  - **Context-Aware Mapping**: Automatically maps `goal_type` and `archetype_group` to the correct subject line and body copy.
-  - **Database personalization**: Retrieves the user's first name from the `profiles` table for a custom "Thank you" closing.
-  - **Plain-Text Optimization**: High-visibility "100% PRIVACY GUARANTEE:" section, optimized for `mailto` link compatibility in all major email clients.
-  - **Hydration Stability**: Implemented a `mounted` state pattern to prevent SSR/CSR mismatches during page load.
-- **Homepage Messaging**:
-  - Pivoted to a professional development theme: "The Shortcut to Strategic Self Improvement."
-  - Professional branding focused on "Reputation Mastery" and "Growth Roadmaps."
-  - Clean typography with all hyphens and em-dashes removed for readability.
+- **User Authentication**: Secure signup with Full Name capture, integrated login/logout.
+- **Dashboard UI & Audit Flow**:
+  - Overview of active and completed audits with real-time progress tracking.
+  - Audit Setup Wizard: Goal selection and rater nomination (up to 20 emails).
+- **Rater Feedback Interface**: Dynamic, anonymous, guided negative/positive prompt feedback form.
+- **Dispatch Hub**: Dynamic, context-aware 30-template matrix for 'mailto' email invitations.
+- **Qualitative "While You Wait" Hypothesis UI**: 
+  - Users can form a holistic prediction of what their raters will say while waiting for feedback.
+  - Editable via Dashboard up until report generation.
+- **Hypothesis Locking & Confirmation**: 
+  - "View Final Report" modal warns the user that viewing the report will permanently lock their hypothesis.
+  - Server-side security (`/api/audits/[id]/prediction/route.ts`) rejects 403 Forbidden if a report already exists for the audit.
+  - Rendered read-only "Hypothesis Locked" dashboard state once report generation connects the dots.
+- **AI Synthesis ("The Radical Truth" Report)**:
+  - Consumes user's saved Hypothesis and compares it directly against aggregated rater feedback.
+  - Explicitly identifiers "Phantom Insecurities" and "Blindspots" using Gemini 2.0.
 
 ## Active Issues
-- **AI Synthesis Utility**: The logic for sanitizing and summarizing feedback into a "Radical Truth" report is in early stages.
-- **Verification of Rater UX**: Need to confirm the seamlessness of the transition from the invitation link to the `FeedbackForm`.
+- **End-to-End Production Testing**: The new Hypothesis Locking UI (modal and checkout button intercept) and API security checks require manual verification on localhost to ensure edge cases are handled elegantly.
 
 ## Next Iteration
-- **Perception Gap Deep-Dive**: Implement AI synthesis for the Radar Chart data to highlight discrepancies between self-assessment and rater perception.
-- **AI Actionable Steps**: Build the logic to generate specific, personalized improvement steps based on the audit results.
-- **Production Testing**: Final comprehensive check of the end-to-end flow from Audit Creation to Dispatch and Feedback Submission.
+- **Finalize Qualitative Report Verification**: Confirm the AI tone and output reliably synthesize the subject's hypothesis vs actual feedback without breaking context.
+- **Perception Gap Charting & Self Audit**: Proceed to flesh out the visual Radar Chart and quantitative "Self Audit" phase to compliment the qualitative AI generated text report.

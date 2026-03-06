@@ -5,6 +5,8 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { CheckoutButton } from "./CheckoutButton";
 import { LogoutButton } from "./LogoutButton";
+import { PredictionModule } from "./PredictionModule";
+import { GenerateReportButton } from "./GenerateReportButton";
 
 export default async function DashboardPage() {
     const supabase = await createClient();
@@ -17,7 +19,7 @@ export default async function DashboardPage() {
     // Fetch user's audits
     const { data: audits } = await supabase
         .from("audits")
-        .select("*, feedback_entries(*)")
+        .select("*, feedback_entries(*), audit_reports(id)")
         .eq("user_id", user.id)
         .order("created_at", { ascending: false });
 
@@ -53,6 +55,8 @@ export default async function DashboardPage() {
                         const completed = audit.feedback_entries.filter((e: any) => e.status === 'submitted').length;
                         const isUnlocked = audit.payment_status === 'paid' || audit.status === 'completed';
                         const progressPercent = total > 0 ? (completed / total) * 100 : 0;
+                        const hasReport = audit.audit_reports && audit.audit_reports.length > 0;
+                        const isLocked = hasReport;
 
                         return (
                             <Card key={audit.id} className="bg-zinc-900 border-zinc-800 text-white shadow-xl relative overflow-hidden">
@@ -93,6 +97,7 @@ export default async function DashboardPage() {
                                             </div>
                                         </div>
                                     )}
+                                    <PredictionModule auditId={audit.id} initialText={audit.self_prediction_text} isLocked={isLocked} />
                                 </CardHeader>
                                 <CardContent>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -113,11 +118,15 @@ export default async function DashboardPage() {
                                 </CardContent>
                                 <CardFooter className="pt-2 flex flex-col gap-3">
                                     {isUnlocked ? (
-                                        <Link href={`/report/${audit.id}`} className="w-full">
-                                            <Button className="w-full bg-emerald-500 text-black hover:bg-emerald-400 font-bold border-none">
-                                                View Final Report
-                                            </Button>
-                                        </Link>
+                                        hasReport ? (
+                                            <Link href={`/report/${audit.id}`} className="w-full">
+                                                <Button className="w-full bg-zinc-800 text-white hover:bg-zinc-700 font-bold border-none transition-colors">
+                                                    View Final Report
+                                                </Button>
+                                            </Link>
+                                        ) : (
+                                            <GenerateReportButton auditId={audit.id} />
+                                        )
                                     ) : completed === total ? (
                                         <CheckoutButton auditId={audit.id} />
                                     ) : (

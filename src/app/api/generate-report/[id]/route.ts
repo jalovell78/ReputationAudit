@@ -25,7 +25,8 @@ function meetsThreshold(submitted: number, total: number): boolean {
 async function synthesiseReport(
     submittedEntries: any[],
     goalType: string | null,
-    selfResponses: Record<string, number>
+    selfResponses: Record<string, number>,
+    selfPredictionText?: string | null
 ): Promise<{ markdown: string; perceptionGap: Record<string, { self: number | null; raters: number | null }> }> {
 
     // Group by archetype_group (fallback to archetype)
@@ -38,9 +39,11 @@ async function synthesiseReport(
 
     // Aggregate multi-rater groups
     const aggregatedSections: string[] = [];
+    const smallGroupTexts: string[] = [];
+
     for (const [group, texts] of Object.entries(groups)) {
-        if (texts.length === 1) {
-            aggregatedSections.push(`[${group}]\n${texts[0]}`);
+        if (texts.length <= 2) {
+            smallGroupTexts.push(...texts);
         } else {
             const consensusPrompt = `Synthesise these ${texts.length} perspectives from the "${group}" group into one definitive Consensus View. Preserve critical insights, note divergence. Output only the synthesis:\n\n${texts.map((t, i) => `Rater ${i + 1}: "${t}"`).join('\n\n')}`;
             const r = await ai.models.generateContent({ model: 'gemini-2.5-flash', contents: consensusPrompt });
@@ -48,21 +51,55 @@ async function synthesiseReport(
         }
     }
 
+    if (smallGroupTexts.length > 0) {
+        aggregatedSections.push(`[Anonymous Uncategorized Perspectives]\n${smallGroupTexts.map((t, i) => `Rater ${i + 1}: "${t}"`).join('\n\n')}`);
+    }
+
     const rawFeedbackBlob = aggregatedSections.join('\n\n---\n\n');
     const goalLabel = goalType ? GOAL_LABELS[goalType] ?? goalType : null;
 
-    const prompt = `You are an elite executive coach delivering a definitive Reputation Audit.
-${goalLabel ? `The subject's strategic goal is: "${goalLabel}". Ensure actionable steps align with this goal.` : ''}
+    const prompt = `You are a world-class, radically honest executive coach delivering a "Reputation Audit." Your tone is direct, insightful, and uncompromisingly objective. Do NOT use corporate jargon, HR-speak, or sugar-coating.
 
-AGGREGATED 360° FEEDBACK (${submittedEntries.length} rater${submittedEntries.length > 1 ? 's' : ''}):
+${goalLabel ? `**Strategic Context:** The subject's ultimate goal is "${goalLabel}". Frame your entire analysis around how their current reputation is either accelerating or sabotaging this goal.` : ''}
+
+**Baseline (The Subject's Hypothesis):**
+${selfPredictionText ? `"${selfPredictionText}"` : `*No hypothesis provided.*`}
+
+**The Reality (Aggregated 360° Feedback from ${submittedEntries.length} voices across various relationships):**
 ${rawFeedbackBlob}
 
-Deliver:
-1. **The Hard Truth** — the dominant, unvarnished perception theme across all voices.
-2. **Your Biggest Blindspot** — the gap between their self-perception and external reality.
-3. **3 Radical Steps to Evolve Your Reputation** — specific, actionable, goal-aligned if goal is set.
+Synthesize this data and deliver the audit using EXACTLY this Markdown structure. 
 
-Format in clean, bold, engaging Markdown. No generic intro — just the analysis.`;
+### CRITICAL ANONYMITY RULES - YOU MUST OBEY THESE:
+1. NEVER attribute a specific quote, sentiment, or theme to a specific relationship group (e.g., do NOT say "Your family says...", or "A colleague noted...").
+2. NEVER use direct quotes from the feedback. You must paraphrase and synthesize the underlying behavioral themes.
+3. Combine feedback across all domains (personal, professional, family) into unified behavioral patterns. E.g., Instead of "At work you are X, but at home you are Y", say "You exhibit a pattern of X, which fractures into Y under pressure."
+
+NO intro and NO outro conversation. Just the output matching the markdown structure below:
+
+### 1. The Hard Truth
+Write exactly two short, punchy sentences. Sentence 1: How they are fundamentally perceived. Sentence 2: The harsh reality or underlying tension that undercuts that perception.
+
+### 2. The Perception Gap
+${selfPredictionText
+            ? `Compare their hypothesis against reality. You must use EXACTLY these Markdown Header 4 elements:
+
+#### Phantom Insecurities
+(1-2 bullet points on negative things they worried about that the data proves are historically false or unnoticed).
+
+#### Blindspots
+(1-2 bullet points on critical issues or habits they have that they completely failed to predict).`
+            : `Summarize the most significant gaps and blindspots in their reputation using bullet points.`}
+
+### 3. Three Radical Steps Forward
+Provide 3 highly specific, unconventional, and actionable steps to evolve their reputation ${goalLabel ? `to help them achieve "${goalLabel}"` : ''}. 
+For EACH step, you MUST use this exact formatting structure:
+**[Actionable Step Name]**
+* **The Insight:** [One very brief sentence explaining why this step matters].
+* **The Action:** [1-2 short bullet points on EXACTLY what to do, avoiding generic advice].
+
+### 4. Your Unfair Advantage
+End with a fiercely encouraging, empowering summary (max 3 sentences). Do NOT invent praise or use generic platitudes. Look at the data: what is the one undeniable strength, character trait, or hidden potential consistently recognized by their raters? Frame this specific strength as the exact weapon they will use to execute the 3 Radical Steps, overcome their blindspots, and evolve. Leave them feeling understood, capable, and ready to act.`;
 
     const response = await ai.models.generateContent({ model: 'gemini-2.5-flash', contents: prompt });
     const markdown = response.text?.trim() ?? '';
@@ -145,7 +182,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
             console.log(`[generate-report] Regenerating for audit ${auditId} — ${submittedCount} responses, stale: ${!!latestReport}`);
 
             const selfResponses: Record<string, number> = audit.self_audit_responses ?? {};
-            const result = await synthesiseReport(submittedEntries, audit.goal_type, selfResponses);
+            const result = await synthesiseReport(submittedEntries, audit.goal_type, selfResponses, audit.self_prediction_text);
 
             // Insert new version into audit_reports
             const { data: newReport, error: insertErr } = await serviceClient

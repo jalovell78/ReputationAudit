@@ -202,7 +202,8 @@ export default function ReportPage() {
                                     components={{
                                         h1: ({ node, ...props }) => <h1 className="text-3xl font-black text-white mt-8 mb-4 tracking-tight" {...props} />,
                                         h2: ({ node, ...props }) => <h2 className="text-2xl font-bold text-white mt-8 mb-4 tracking-tight" {...props} />,
-                                        h3: ({ node, ...props }) => <h3 className="text-xl font-bold text-zinc-100 mt-6 mb-3" {...props} />,
+                                        h3: ({ node, ...props }) => <h3 className="text-2xl font-bold text-white mt-16 mb-6 pt-10 border-t border-zinc-800" {...props} />,
+                                        h4: ({ node, ...props }) => <h4 className="text-lg font-bold text-emerald-400 mt-4 mb-2 tracking-wide uppercase" {...props} />,
                                         p: ({ node, ...props }) => <p className="text-zinc-300 leading-relaxed mb-6 text-lg" {...props} />,
                                         ul: ({ node, ...props }) => <ul className="list-disc list-outside ml-6 space-y-3 mb-6 text-zinc-300" {...props} />,
                                         ol: ({ node, ...props }) => <ol className="list-decimal list-outside ml-6 space-y-3 mb-6 text-zinc-300" {...props} />,
