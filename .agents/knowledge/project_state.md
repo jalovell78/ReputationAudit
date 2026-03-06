@@ -11,6 +11,7 @@
   - `src/app/`: Core routing and page components.
   - `src/components/ui/`: Reusable shadcn/ui components.
   - `src/lib/supabase/`: Supabase client initialization (server/client/middleware).
+  - `src/lib/emailTemplates.ts`: Core matrix of 30 relationship-aware email templates.
   - `supabase/migrations/`: Database schema and RLS policies.
   - `.agents/knowledge/`: Persistent project documentation (Knowledge Items).
 
@@ -30,17 +31,22 @@
   - Centered Anonymity Guarantee ("Your identity is strictly masked").
   - Guided feedback via positive and negative prompt examples.
   - Vertical spacing and high-contrast UI polish.
+- **Dispatch Hub (Rater Invitations)**:
+  - **Dynamic Template Matrix**: 30 unique, relationship-aware email templates (5 Goals x 6 Roles) implemented in `src/lib/emailTemplates.ts`.
+  - **Context-Aware Mapping**: Automatically maps `goal_type` and `archetype_group` to the correct subject line and body copy.
+  - **Database personalization**: Retrieves the user's first name from the `profiles` table for a custom "Thank you" closing.
+  - **Plain-Text Optimization**: High-visibility "100% PRIVACY GUARANTEE:" section, optimized for `mailto` link compatibility in all major email clients.
+  - **Hydration Stability**: Implemented a `mounted` state pattern to prevent SSR/CSR mismatches during page load.
 - **Homepage Messaging**:
   - Pivoted to a professional development theme: "The Shortcut to Strategic Self Improvement."
   - Professional branding focused on "Reputation Mastery" and "Growth Roadmaps."
-  - Visual identity updated to a premium Indigo/Blue professional palette.
   - Clean typography with all hyphens and em-dashes removed for readability.
 
 ## Active Issues
 - **AI Synthesis Utility**: The logic for sanitizing and summarizing feedback into a "Radical Truth" report is in early stages.
-- **Email Templates**: Rater invitation emails need further refinement for tone and clarity.
+- **Verification of Rater UX**: Need to confirm the seamlessness of the transition from the invitation link to the `FeedbackForm`.
 
 ## Next Iteration
 - **Perception Gap Deep-Dive**: Implement AI synthesis for the Radar Chart data to highlight discrepancies between self-assessment and rater perception.
 - **AI Actionable Steps**: Build the logic to generate specific, personalized improvement steps based on the audit results.
-- **Email Template Polish**: Finalize the rater invitation flow with optimized email copies.
+- **Production Testing**: Final comprehensive check of the end-to-end flow from Audit Creation to Dispatch and Feedback Submission.
