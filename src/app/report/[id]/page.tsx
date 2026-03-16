@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, Sparkles, Loader2, AlertCircle, Target, Clock, Lock, Users } from "lucide-react";
 import Link from "next/link";
 import ReactMarkdown from 'react-markdown';
-import { PerceptionGapChart } from "./PerceptionGapChart";
 
 const GOAL_LABELS: Record<string, string> = {
     career_progression: "Career Progression",
@@ -51,8 +50,6 @@ export default function ReportPage() {
 
     const [loading, setLoading] = useState(true);
     const [reportData, setReportData] = useState<string | null>(null);
-    const [perceptionGap, setPerceptionGap] = useState<Record<string, { self: number | null; raters: number | null }> | null>(null);
-    const [hasPerceptionData, setHasPerceptionData] = useState(false);
     const [goalLabel, setGoalLabel] = useState<string | null>(null);
     const [isUnlocked, setIsUnlocked] = useState(false);
     const [generatedAt, setGeneratedAt] = useState<string | null>(null);
@@ -75,8 +72,6 @@ export default function ReportPage() {
 
                 if (data.status === 'ready') {
                     setReportData(data.report);
-                    setPerceptionGap(data.perceptionGap ?? null);
-                    setHasPerceptionData(data.hasPerceptionData ?? false);
                     setGoalLabel(data.goalLabel ?? null);
                     setIsUnlocked(data.isUnlocked ?? false);
                     setGeneratedAt(data.generatedAt ?? null);
@@ -168,30 +163,12 @@ export default function ReportPage() {
                 <div className="w-full max-w-4xl animate-in fade-in slide-in-from-bottom-4 duration-700">
                     <div className="mb-10 text-center space-y-3">
                         <h1 className="text-4xl md:text-5xl font-black tracking-tighter bg-gradient-to-br from-white to-zinc-500 bg-clip-text text-transparent">
-                            The Radical Truth.
+                            Your Reputation Audit.
                         </h1>
                         <p className="text-zinc-400 text-lg">
-                            Your AI-synthesised 360° Reputation Audit — based on {submittedCount} of {totalRaters} raters.
+                            Your AI-synthesised insights — based on {submittedCount} of {totalRaters} raters.
                         </p>
                     </div>
-
-                    {/* Perception Gap Chart — only if self-audit completed */}
-                    {isUnlocked && perceptionGap && hasPerceptionData && (
-                        <PerceptionGapChart perceptionGap={perceptionGap} />
-                    )}
-
-                    {/* Self-audit nudge (unpaid users don't see chart yet, but can do self-audit) */}
-                    {!hasPerceptionData && (
-                        <div className="mb-8 p-4 bg-indigo-500/10 border border-indigo-500/20 rounded-xl text-sm flex items-center justify-between gap-4">
-                            <div>
-                                <strong className="text-indigo-200">Unlock your Perception Gap chart!</strong>
-                                <p className="text-indigo-400 mt-0.5">Complete the Self-Audit to compare your self-scores to your raters'.</p>
-                            </div>
-                            <Link href={`/dashboard/self-audit/${auditId}`} className="shrink-0 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors">
-                                Start
-                            </Link>
-                        </div>
-                    )}
 
                     <Card className="bg-zinc-900 border-zinc-800 shadow-2xl relative overflow-hidden">
                         <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none -translate-y-1/2 translate-x-1/3" />
@@ -202,7 +179,7 @@ export default function ReportPage() {
                                     components={{
                                         h1: ({ node, ...props }) => <h1 className="text-3xl font-black text-white mt-8 mb-4 tracking-tight" {...props} />,
                                         h2: ({ node, ...props }) => <h2 className="text-2xl font-bold text-white mt-8 mb-4 tracking-tight" {...props} />,
-                                        h3: ({ node, ...props }) => <h3 className="text-2xl font-bold text-white mt-16 mb-6 pt-10 border-t border-zinc-800" {...props} />,
+                                        h3: ({ node, ...props }) => <h3 className="text-2xl font-bold text-white mt-16 mb-6 pt-10 border-t border-zinc-800 first:mt-0 first:pt-0 first:border-t-0" {...props} />,
                                         h4: ({ node, ...props }) => <h4 className="text-lg font-bold text-emerald-400 mt-4 mb-2 tracking-wide uppercase" {...props} />,
                                         p: ({ node, ...props }) => <p className="text-zinc-300 leading-relaxed mb-6 text-lg" {...props} />,
                                         ul: ({ node, ...props }) => <ul className="list-disc list-outside ml-6 space-y-3 mb-6 text-zinc-300" {...props} />,

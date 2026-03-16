@@ -58,7 +58,7 @@ async function synthesiseReport(
     const rawFeedbackBlob = aggregatedSections.join('\n\n---\n\n');
     const goalLabel = goalType ? GOAL_LABELS[goalType] ?? goalType : null;
 
-    const prompt = `You are a world-class, radically honest executive coach delivering a "Reputation Audit." Your tone is direct, insightful, and uncompromisingly objective. Do NOT use corporate jargon, HR-speak, or sugar-coating.
+    const prompt = `You are a world-class, insightful executive coach delivering a "Reputation Audit." Your tone is direct, grounded, and uncompromisingly objective. Do NOT use corporate jargon, HR-speak, or clinical cliches.
 
 ${goalLabel ? `**Strategic Context:** The subject's ultimate goal is "${goalLabel}". Frame your entire analysis around how their current reputation is either accelerating or sabotaging this goal.` : ''}
 

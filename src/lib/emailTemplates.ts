@@ -43,7 +43,7 @@ const TEMPLATES: Record<GrowthGoal, Record<RaterArchetype, EmailTemplate>> = {
             body: "You have a unique view of the personality traits and life-long drive that fuel my career. I’m auditing my professional reputation and I’d love your perspective on who I am becoming. Based on what you've seen, what are the natural strengths or blindspots that might be shaping my professional journey?"
         },
         critic_challenger: {
-            subject: "The Radical Truth: I need your toughest critique",
+            subject: "Reputation Audit: I need your toughest critique",
             body: "I’ve selected you because you don’t sugarcoat things. I’m auditing my career reputation and I need the dissenting view, the hard truths others are too \"polite\" to say. Be bold and blunt about my professional trajectory, my brand, and any self-sabotaging patterns observed through our connection."
         }
     },
@@ -69,7 +69,7 @@ const TEMPLATES: Record<GrowthGoal, Record<RaterArchetype, EmailTemplate>> = {
             body: "You know my natural tendencies better than anyone. I'm auditing my leadership style and I'd love your perspective on how I handle authority and responsibility. What are the natural leadership traits, or blindspots, that you've watched me develop throughout our connection?"
         },
         critic_challenger: {
-            subject: "The Radical Truth: My leadership blindspots",
+            subject: "Reputation Audit: My leadership blindspots",
             body: "Most people are too polite to tell me where my leadership might be failing. I need a blunt assessment. Where have I lacked authority? Where is my \"leadership presence\" just a facade? Give me the raw data on how I am perceived when I take a leading role."
         }
     },
@@ -121,13 +121,13 @@ const TEMPLATES: Record<GrowthGoal, Record<RaterArchetype, EmailTemplate>> = {
             body: "We all have \"default\" ways of communicating that we've carried for years. I'm auditing my social intelligence and I'd love your perspective on my long-term communication habits. Where do I tend to fail when it comes to deep connection or empathy?"
         },
         critic_challenger: {
-            subject: "The Radical Truth: Where am I socially unaware?",
+            subject: "Reputation Audit: Where am I socially unaware?",
             body: "I'm looking for the social friction I've caused but not seen. Please be blunt about my communication failures, my empathy blindspots, and where my attempts at social influence have actually failed."
         }
     },
     generic_audit: {
         peer_colleague: {
-            subject: "The Radical Truth: My reputation audit (Anonymous)",
+            subject: "Reputation Audit: My reputation audit (Anonymous)",
             body: "I'm doing a deep dive into my reputation. I need the feedback that usually stays in the shadows. What is the one thing no one has told me to my face? Whether it's good or bad, I need the raw perspective from our professional connection."
         },
         direct_report: {

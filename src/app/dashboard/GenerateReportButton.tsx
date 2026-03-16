@@ -30,10 +30,10 @@ export function GenerateReportButton({ auditId }: GenerateReportButtonProps) {
                 <DialogHeader>
                     <DialogTitle className="flex items-center gap-2">
                         <LockIcon className="w-5 h-5 text-amber-500" />
-                        Ready to view your Radical Truth?
+                        Ready to view your Reputation Audit?
                     </DialogTitle>
                     <DialogDescription className="text-zinc-400">
-                        Generating this report will explicitly finalize the AI analysis and <strong className="text-zinc-200">permanently lock your current hypothesis</strong>. If you'd like to update your predictions on what your raters said, do that now.
+                        Generating this report will finalize the AI analysis and <strong className="text-zinc-200">permanently lock your current hypothesis</strong>. If you'd like to update your predictions on what your raters said, do that now.
                     </DialogDescription>
                 </DialogHeader>
                 <DialogFooter className="sm:justify-between flex-col-reverse sm:flex-row gap-2 mt-4">

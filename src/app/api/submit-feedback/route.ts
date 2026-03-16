@@ -45,7 +45,7 @@ export async function POST(req: Request) {
         const goalType: string = (entry.audits as any)?.goal_type ?? null;
         const goalContext = goalType ? GOAL_CONTEXT[goalType] ?? '' : '';
 
-        const prompt = `You are a radical truth extractor and psychological analyst.
+        const prompt = `You are an expert reputation analyst and psychological synthesizer.
 ${goalContext ? `CONTEXT: ${goalContext}` : ''}
 
 Rewrite this feedback to:
