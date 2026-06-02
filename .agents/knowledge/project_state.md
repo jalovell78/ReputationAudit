@@ -1,7 +1,7 @@
 # Project State: Reputation Audit
 
 ## Architecture
-- **Framework**: Next.js 15 (App Router, Turbopack)
+- **Framework**: Next.js 16 (App Router)
 - **Authentication**: Supabase Auth (Server & Client)
 - **Database**: Supabase (PostgreSQL) with Row Level Security (RLS)
 - **AI Synthesis**: Google GenAI (Gemini 2.0 Flash)
@@ -11,6 +11,7 @@
 - **File Structure**:
   - `src/app/`: Core routing and page components.
   - `src/components/ui/`: Reusable shadcn/ui components.
+  - `src/components/marketing/`: Brand-specific landing page hero layouts.
   - `src/lib/supabase/`: Supabase client initialization.
   - `src/lib/emailTemplates.ts`: Core matrix of 30 relationship-aware email templates.
   - `src/app/api/generate-report/`: Serverless endpoint for AI generation and data caching.
@@ -18,6 +19,7 @@
   - `.agents/knowledge/`: Persistent project documentation (Knowledge Items).
 
 ## Completed Features
+- **Multi-Tenant Landing Pages**: Split primary entry route `src/app/page.tsx` using full-page Component Delegation for `RepStanding` (corporate layout) and `The Perception Mirror` (introspective wellness layout).
 - **User Authentication**: Secure signup with Full Name capture, integrated login/logout.
 - **Dashboard UI & Audit Flow**:
   - Overview of active/completed audits with real-time progress tracking.

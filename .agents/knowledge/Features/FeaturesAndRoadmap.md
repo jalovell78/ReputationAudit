@@ -23,6 +23,7 @@ The product uses a Multi-Tenant, Single-Codebase Architecture to deploy two dist
 
 ### Phase 1: Core Feedback Engine (CURRENT BASELINE)
 * **User Authentication:** Fully operational via Supabase Auth, capturing client profile details on onboarding.
+* **Multi-Tenant Landing Pages:** Implemented full-page Component Delegation for `RepStanding` (corporate style) and `The Perception Mirror` (introspective layout), dynamically selected at runtime based on tenant headers.
 * **Audit Setup Wizard:** Subject configuration flow enabling strategic development goal selection and nomination of up to 20 rater emails.
 * **Rater Feedback Interface:** Dynamic, anonymous external evaluator text submission flow.
 * **Feedback Sanitization:** Automated LLM-driven filtering layer that strips identifying language or explicit names from raw text inputs to protect evaluator anonymity.

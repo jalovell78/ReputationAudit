@@ -26,7 +26,14 @@ The implementation must parse the incoming request host header. If the domain co
 ---
 
 ## 3. Dynamic UI Branding & Theme Injection
-UI views must remain entirely generic. Component styling profiles must read the resolved header token to toggle layout aesthetics. Because the project leverages Tailwind CSS v4, dynamic style application must be driven via semantic data attributes or context mappings rather than JavaScript configuration utilities.
+Most UI views must remain entirely generic, using semantic variable colors and context mappings to match the active brand at runtime.
+
+### Landing Page Component Delegation
+To allow for distinct marketing narratives, copy layouts, and visual flows, the primary landing route (`src/app/page.tsx`) uses a **Component Delegation** pattern. The entry page is a clean Server Component that detects the tenant using `getTenantFromHeaders()` and renders the respective brand-specific hero layout:
+- **RepStanding**: Renders `<RepStandingHero />` from `src/components/marketing/repstanding-hero.tsx` (Corporate executive coaching theme).
+- **The Perception Mirror**: Renders `<PerceptionMirrorHero />` from `src/components/marketing/perception-mirror-hero.tsx` (Introspective wellness theme).
+
+All inner pages (e.g., dashboards, setup flows) remain generic and derive parameters dynamically from context.
 
 ### Theme Hook Implementation Rule
 When designing custom layout wrappers, use a top-level layout property to fetch the 'x-tenant-source' header. Set this value as a root custom data attribute directly on the html element (e.g., data-tenant={tenant}).
