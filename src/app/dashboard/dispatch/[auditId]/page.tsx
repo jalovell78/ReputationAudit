@@ -1,8 +1,8 @@
 import { createClient } from "@/lib/supabase/server";
 import { DispatchHubList } from "./DispatchHubList";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import { ArrowLeftIcon } from "lucide-react";
+import { getTenantFromHeaders } from "@/lib/tenant-server";
 
 export default async function DispatchHubPage({ params }: { params: { auditId: string } }) {
     const { auditId } = await params;
@@ -10,6 +10,9 @@ export default async function DispatchHubPage({ params }: { params: { auditId: s
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) return null;
+
+    const tenant = await getTenantFromHeaders();
+    const isMirror = tenant === 'perception_mirror';
 
     const { data: entries } = await supabase
         .from("feedback_entries")
@@ -29,19 +32,23 @@ export default async function DispatchHubPage({ params }: { params: { auditId: s
         .single();
 
     if (!entries || entries.length === 0) {
-        return <div className="p-12 text-white">Audit not found or access denied.</div>;
+        return <div className="p-12 text-foreground bg-background">Audit/Reflection not found or access denied.</div>;
     }
 
     return (
-        <div className="min-h-screen bg-zinc-950 p-4 py-12 md:p-12 selection:bg-zinc-800">
+        <div className="min-h-screen bg-background text-foreground p-4 py-12 md:p-12 transition-colors duration-300">
             <div className="max-w-3xl mx-auto">
                 <div className="mb-8">
-                    <Link href="/dashboard" className="text-zinc-500 hover:text-white flex items-center gap-2 mb-6 text-sm transition-colors">
+                    <Link href="/dashboard" className="text-muted-foreground hover:text-foreground flex items-center gap-2 mb-6 text-sm transition-colors">
                         <ArrowLeftIcon className="w-4 h-4" /> Back to Dashboard
                     </Link>
-                    <h1 className="text-3xl font-bold tracking-tight text-white mb-2">Dispatch Hub</h1>
-                    <p className="text-zinc-400 leading-relaxed text-sm">
-                        Here are your 5 generated unique links. Click the <strong>Mail</strong> button to open your default email client with a pre-written template, or click the copy icon to send them manually via SMS/WhatsApp.
+                    <h1 className="text-3xl font-serif font-bold text-foreground mb-2">
+                        {isMirror ? "Reflection Mirror Links" : "Dispatch Hub"}
+                    </h1>
+                    <p className="text-muted-foreground leading-relaxed text-sm">
+                        {isMirror 
+                            ? "Here are the unique invitation links for your reflection partners. Click the Mail button to open your default email client with a pre-written invite, or copy the link to send it via SMS, WhatsApp, or email."
+                            : "Here are the generated unique links for your raters. Click the Mail button to open your default email client with a pre-written template, or click the copy icon to send them manually via SMS/WhatsApp."}
                     </p>
                 </div>
 
@@ -54,3 +61,4 @@ export default async function DispatchHubPage({ params }: { params: { auditId: s
         </div>
     );
 }
+

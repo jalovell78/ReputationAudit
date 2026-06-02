@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { useTenant } from "@/components/tenant-context";
 
 interface PredictionModuleProps {
     auditId: string;
@@ -14,6 +15,9 @@ export function PredictionModule({ auditId, initialText, isLocked = false }: Pre
     const [text, setText] = useState(initialText || "");
     const [isSaving, setIsSaving] = useState(false);
     const [saved, setSaved] = useState(false);
+
+    const { tenant } = useTenant();
+    const isMirror = tenant === 'perception_mirror';
 
     const handleSave = async () => {
         setIsSaving(true);
@@ -39,39 +43,49 @@ export function PredictionModule({ auditId, initialText, isLocked = false }: Pre
     };
 
     return (
-        <div className="mt-6 rounded-md bg-zinc-950/50 border border-zinc-800 p-4">
-            <h4 className="text-sm font-semibold text-zinc-200 mb-1 flex items-center gap-2">
-                While you wait: Formulate your hypothesis
+        <div className="mt-6 rounded-md bg-secondary/30 border border-border p-4 transition-colors duration-300">
+            <h4 className="text-sm font-serif font-semibold text-foreground mb-1 flex items-center gap-2">
+                {isMirror ? "While you wait: Note your self-reflection" : "While you wait: Formulate your hypothesis"}
             </h4>
-            <p className="text-xs text-zinc-400 mb-3 leading-relaxed">
+            <p className="text-xs text-muted-foreground mb-3 leading-relaxed">
                 {isLocked
-                    ? "Your hypothesis has been locked because a report was generated."
-                    : "What is the #1 strength you think this group will highlight? What is your biggest insecurity or the main criticism you expect? (This helps our AI identify your Blindspots and Phantom Insecurities)."
+                    ? (isMirror ? "Your reflection has been locked because a report was generated." : "Your hypothesis has been locked because a report was generated.")
+                    : (isMirror 
+                        ? "What is the #1 strength you think your inner circle will highlight? What is your greatest vulnerability or the shadow behavior you expect? (This helps our AI identify your Blindspots and Hidden Shadows)."
+                        : "What is the #1 strength you think this group will highlight? What is your biggest insecurity or the main criticism you expect? (This helps our AI identify your Blindspots and Phantom Insecurities).")
                 }
             </p>
             <div className="space-y-3">
                 <Textarea
-                    placeholder="I think they will say I am highly strategic, but I worry my direct reports feel I don't give enough tactical direction..."
+                    placeholder={isMirror 
+                        ? "I think they will feel I am deeply empathetic, but I worry my family feels I don't set strong boundaries..."
+                        : "I think they will say I am highly strategic, but I worry my direct reports feel I don't give enough tactical direction..."
+                    }
                     value={text}
                     onChange={(e) => {
                         if (!isLocked) setText(e.target.value);
                     }}
                     disabled={isLocked}
-                    className="bg-black/40 border-zinc-800 text-sm h-28 resize-none focus-visible:ring-emerald-500/30 disabled:opacity-75 disabled:cursor-not-allowed"
+                    className="bg-background border-input text-foreground text-sm h-28 resize-none focus-visible:ring-primary/30 disabled:opacity-75 disabled:cursor-not-allowed"
                 />
                 <div className="flex justify-end items-center gap-3">
-                    {saved && <span className="text-xs text-emerald-400">Saved successfully.</span>}
+                    {saved && <span className="text-xs text-emerald-650 dark:text-emerald-400">Saved successfully.</span>}
                     <Button
                         size="sm"
                         variant="secondary"
-                        className="bg-zinc-800 text-zinc-300 hover:bg-zinc-700 hover:text-white border-none disabled:opacity-50"
+                        className="font-bold border border-border disabled:opacity-50 cursor-pointer"
                         onClick={handleSave}
                         disabled={isSaving || text === initialText || isLocked}
                     >
-                        {isLocked ? "Hypothesis Locked" : isSaving ? "Saving..." : "Save Hypothesis"}
+                        {isLocked 
+                            ? (isMirror ? "Reflection Locked" : "Hypothesis Locked") 
+                            : isSaving 
+                                ? "Saving..." 
+                                : (isMirror ? "Save Reflection" : "Save Hypothesis")}
                     </Button>
                 </div>
             </div>
         </div>
     );
 }
+

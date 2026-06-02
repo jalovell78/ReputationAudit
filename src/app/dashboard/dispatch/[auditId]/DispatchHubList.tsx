@@ -6,10 +6,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { CopyIcon, MailIcon, CheckIcon } from "lucide-react";
 import { getRaterEmailTemplate } from "@/lib/emailTemplates";
+import { useTenant } from "@/components/tenant-context";
 
 export function DispatchHubList({ entries, goalType, userName }: { entries: any[], goalType?: string, userName?: string }) {
     const [copiedId, setCopiedId] = useState<string | null>(null);
     const [mounted, setMounted] = useState(false);
+    const { tenant } = useTenant();
+    const isMirror = tenant === 'perception_mirror';
 
     useEffect(() => {
         setMounted(true);
@@ -46,11 +49,11 @@ export function DispatchHubList({ entries, goalType, userName }: { entries: any[
                 const shareUrl = `${baseUrl}/rate/${entry.rater_link_id}`;
 
                 return (
-                    <div key={entry.id} className="p-5 rounded-lg bg-zinc-900 border border-zinc-800 flex flex-col gap-4">
+                    <div key={entry.id} className="p-5 rounded-lg bg-card border border-border flex flex-col gap-4">
                         <div className="flex flex-col md:flex-row justify-between md:items-center gap-2">
                             <div>
-                                <h3 className="font-semibold text-white">{entry.archetype}</h3>
-                                <p className="text-sm text-zinc-400">{entry.rater_name} ({entry.rater_email})</p>
+                                <h3 className="font-serif font-semibold text-foreground">{entry.archetype}</h3>
+                                <p className="text-sm text-muted-foreground">{entry.rater_name} ({entry.rater_email})</p>
                             </div>
                             <div className="flex items-center gap-2">
                                 <Badge status={entry.status} />
@@ -58,24 +61,26 @@ export function DispatchHubList({ entries, goalType, userName }: { entries: any[
                         </div>
 
                         <div className="space-y-2">
-                            <Label className="text-zinc-500 text-xs uppercase tracking-wider">Unique Anonymous Link</Label>
+                            <Label className="text-muted-foreground text-xs uppercase tracking-wider">
+                                {isMirror ? "Unique Anonymous Link" : "Unique Anonymous Link"}
+                            </Label>
                             <div className="flex gap-2">
                                 <Input
                                     readOnly
                                     value={shareUrl}
-                                    className="bg-black/50 border-zinc-700 text-zinc-300 font-mono text-xs focus-visible:ring-0"
+                                    className="bg-secondary border-input text-foreground font-mono text-xs focus-visible:ring-0"
                                 />
                                 <Button
                                     variant="outline"
                                     size="icon"
-                                    className="shrink-0 border-zinc-700 hover:bg-zinc-800 hover:text-white"
+                                    className="shrink-0 border-input hover:bg-secondary hover:text-foreground cursor-pointer"
                                     onClick={() => handleCopy(entry.id, shareUrl)}
                                 >
-                                    {copiedId === entry.id ? <CheckIcon className="w-4 h-4 text-emerald-400" /> : <CopyIcon className="w-4 h-4 text-zinc-400" />}
+                                    {copiedId === entry.id ? <CheckIcon className="w-4 h-4 text-emerald-500" /> : <CopyIcon className="w-4 h-4 text-muted-foreground" />}
                                 </Button>
                                 <Button
                                     variant="default"
-                                    className="shrink-0 bg-white text-black hover:bg-zinc-200"
+                                    className="shrink-0 font-bold rounded-full cursor-pointer"
                                     asChild
                                 >
                                     <a href={getMailtoLink(entry, shareUrl)}>
@@ -94,7 +99,8 @@ export function DispatchHubList({ entries, goalType, userName }: { entries: any[
 
 function Badge({ status }: { status: string }) {
     if (status === 'submitted') {
-        return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Submitted</span>;
+        return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">Submitted</span>;
     }
-    return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-zinc-800 text-zinc-400 border border-zinc-700">Waiting for reply</span>;
+    return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-secondary text-muted-foreground border border-border">Waiting for reply</span>;
 }
+

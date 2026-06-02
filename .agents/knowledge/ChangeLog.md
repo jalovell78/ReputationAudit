@@ -4,8 +4,11 @@ This file acts as the single source of truth for all code updates, database sche
 
 ---
 
-## [2026-06-02] - Domain & Infrastructure Setup
+## [2026-06-02] - Domain Infrastructure & Multi-Brand Styling
 ### Added
+- Centralized client context provider (`TenantProvider`) and `useTenant` hook to expose brand config details, titles, taglines, and vocabulary components.
+- Introduced a server-only helper `src/lib/tenant-server.ts` using `next/headers` to isolate server resolution from client-side imports.
+- Defined Tailwind CSS v4 dynamic variables mapping specific OKLCH color palettes (Indigo accents for RepStanding, Sage/Sand accents for The Perception Mirror) and fonts on dynamic attributes (`html[data-tenant]`).
 - Configured multi-domain architecture support for a single-codebase Vercel deployment.
 - Map primary brand assets for `theperceptionmirror.com`:
   - Added Apex `A` record pointing to Vercel production IP (`216.198.79.1`).
@@ -17,6 +20,9 @@ This file acts as the single source of truth for all code updates, database sche
 - Implemented server-side permanent redirection rules via `.htaccess` (301 redirects) routing all incoming `.uk` regional traffic and wildcard paths cleanly to the canonical primary address: `https://www.theperceptionmirror.com`.
 
 ### Changed
+- Refactored `src/middleware.ts` to capture brand overrides via query parameters (`?tenant=x`), cookies, or request host headers, attaching the resolved tenant to downstream request headers (`x-tenant-source`).
+- Refactored root layout `src/app/layout.tsx` to handle server-side tenant lookup, dynamically load specific Google Fonts (Geist, Playfair Display, Plus Jakarta Sans), and toggle the base `dark` class dynamically.
+- Migrated static B2B values on the Landing page (`src/app/page.tsx`), Login page (`src/app/login/page.tsx`), Dashboard (`src/app/dashboard/page.tsx`), Setup Wizard (`SetupWizard.tsx`), and Dispatch Hub (`DispatchHubList.tsx`) to pull colors from semantic CSS variables and copy from dynamic dictionaries.
 - Bypassed registrar-level client panel propagation bottlenecks by routing core DNS management natively through existing ecoHosting server Zone Editor.
 
 ## [2026-06-01] - Project Re-Initialization

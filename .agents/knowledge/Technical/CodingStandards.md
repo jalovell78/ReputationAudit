@@ -15,8 +15,11 @@ Audience: Dev
 - **Dynamic Assertions:** Any component rendering brand-specific terminology, visual themes, or email configurations must derive its parameters dynamically from the incoming tenant context. Never hardcode brand assets.
 
 ## 3. Testing, Verification, & Database Constraints
-- **Prohibition on Automatic Testing:** Do not execute automated test suites or testing scripts. 
-- **Manual Verification Loop:** After completing a file modification, provide a brief summary of the exact lines changed and prompt the user to conduct a manual test. The task state remains "Pending User Verification" until feedback is received.
+- **Absolute Prohibition on Automated Testing:** You are strictly prohibited from executing automated test suites, npm test scripts, or local testing frameworks. 
+- **Manual Verification Loop & Mandatory Turn-Break:** After completing any file modification, you must immediately:
+  1. Provide a concise summary of the exact files and lines changed.
+  2. Prompt the user with explicit instructions on how to manually verify the change in their browser or local server.
+  3. End your turn immediately. Do not attempt any further terminal operations or code steps until the user provides verification feedback.
 - **NO DIRECT SQL EXECUTION:** You are strictly prohibited from attempting to execute SQL scripts, database migrations, or raw queries directly against the database or via any CLI tooling. 
 - **SQL Hand-off Rule:** Whenever a database script or migration file is generated or modified, you must output the clean SQL code block or file path, provide an impact summary, and explicitly prompt the user to run the script manually inside their Supabase dashboard or local console.
 - **Hard Stop on Deletions & Drops:** Any command involving `DELETE`, `DROP`, or `TRUNCATE` in database scripts, or the deletion of project files, requires an immediate **Mandatory Turn-Break**. Provide an impact assessment and end your turn. Do not execute or prompt the user without explicit "Go Ahead" approval.
