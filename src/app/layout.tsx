@@ -22,7 +22,7 @@ const playfairDisplay = Playfair_Display({
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   variable: "--font-jakarta",
-  subsets: ["sans-serif", "latin"],
+  subsets: ["latin"],
 });
 
 export async function generateMetadata(): Promise<Metadata> {
