@@ -27,6 +27,12 @@
   - Audit Setup Wizard: Goal selection and rater nomination (up to 20 emails).
 - **Rater Feedback Interface**: Dynamic, anonymous, guided feedback form (Positive/Reflective/Critical).
 - **Feedback Sanitization**: AI-driven removal of identifying language from rater feedback to preserve anonymity.
+- **Dynamic Micro-Survey Response System**:
+  - Replaced the qualitative-only rater interface (`/rate/[id]`) with a "Click First, Elaborate Second" quantitative wizard flow.
+  - Implemented category-aware 1-to-5 metric sliders, trait tag clouds, and dynamic placeholder context seed inputs.
+  - Created `rater_responses` schema and integrated privileged server-side database insertion to record granular dimension metrics.
+  - Integrated dynamic brand-vocabulary and score labels (e.g. corporate development scales vs. wellness alignment presence).
+  - Synthesized structured outputs into a single text block for backward compatibility with Gemini sanitization and report engines.
 - **Dispatch Hub**: Dynamic, context-aware 30-template matrix for email invitations.
 - **Hypothesis UI & Locking**: 
   - Subjects predict what raters will say while waiting for feedback.
@@ -38,7 +44,7 @@
   - UI refinement for scannable Markdown content.
 
 ## Active Issues
-- **Scoring Feature Discontinued**: The quantitative Self-Audit scoring and Perception Gap radar charts have been removed to focus on qualitative AI synthesis. No active logic bugs currently known.
+- **Self-Audit Scoring Discontinued**: The quantitative *self-audit* scoring has been removed to focus on external rater reviews. Quantitative external reviews are now fully gathered via structured rater micro-surveys.
 
 ## Next Iteration
 - **Stripe Integration Implementation**: Completing the end-to-end payment flow to gate the final AI report.

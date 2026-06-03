@@ -4,6 +4,16 @@ This file acts as the single source of truth for all code updates, database sche
 
 ---
 
+## [2026-06-03] - Dynamic Micro-Survey & Rater Responses
+### Added
+- Created database migration file `supabase/migrations/20260603120000_create_rater_responses.sql` defining `rater_responses` table (capturing `quantitative_score`, `selected_tags`, `optional_text_seed`), index, and owner `SELECT` RLS policy.
+- Added `GoalCategoryConfig` interface, `GOAL_CONFIG_MAP` dictionary, and `getGoalConfig` helper in `src/lib/tenant.ts` to map developmental goals to custom survey categories, tag banks, and dynamic context placeholders.
+
+### Changed
+- Refactored `/api/submit-feedback` endpoint in `src/app/api/submit-feedback/route.ts` to process structured survey responses, insert entries securely into the `rater_responses` table using the backend service client role, synthesize evaluations into a qualitative block, pass it to Gemini sanitizer, and preserve legacy Stripe stubs.
+- Refactored `/rate/[id]` Server Component in `src/app/rate/[id]/page.tsx` to dynamically resolve tenant contexts from the parent audit's `goal_type` and apply layout branding (serif/sans fonts, themes) to the loading/invalid/thank-you views.
+- Refactored client-side form `FeedbackForm.tsx` to implement a multi-step micro-survey wizard, including a 1–5 scalar button matrix with dynamic labels, tag chip selection, a real-time dynamic contextual text seed placeholder, and a summary confirmation screen before final submission.
+
 ## [2026-06-03] - Dynamic Multi-Tenant Report Route
 ### Added
 - Created `ReportClientView.tsx` to handle client-side rendering of the report page with multi-tenant delegation, dynamic brand vocabularies ("reflection partners" under `perception_mirror` vs "raters" under `repstanding`), and responsive layout containers.

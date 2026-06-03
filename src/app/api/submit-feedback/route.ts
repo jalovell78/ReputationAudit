@@ -15,10 +15,10 @@ const GOAL_CONTEXT: Record<string, string> = {
 
 export async function POST(req: Request) {
     try {
-        const { id, feedback } = await req.json();
+        const { id, responses } = await req.json();
 
-        if (!id || !feedback) {
-            return NextResponse.json({ error: 'Missing id or feedback' }, { status: 400 });
+        if (!id || !Array.isArray(responses) || responses.length === 0) {
+            return NextResponse.json({ error: 'Missing id or responses' }, { status: 400 });
         }
 
         const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -41,7 +41,32 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: 'Invalid or already submitted link' }, { status: 400 });
         }
 
-        // 2. Build goal-aware sanitization prompt
+        // 2. Insert structured responses to the new rater_responses table (privileged backend client boundary)
+        const responsesToInsert = responses.map((r: any) => ({
+            audit_id: entry.audit_id,
+            category_name: r.category_name,
+            quantitative_score: r.quantitative_score,
+            selected_tags: r.selected_tags || null,
+            optional_text_seed: r.optional_text_seed || null,
+        }));
+
+        const { error: insertErr } = await supabase
+            .from('rater_responses')
+            .insert(responsesToInsert);
+
+        if (insertErr) throw insertErr;
+
+        // 3. Compile responses into a consolidated qualitative block for Gemini compatibility
+        const compiledFeedback = responses.map((r: any) => {
+            const scoreText = `${r.quantitative_score}/5`;
+            const tagsText = Array.isArray(r.selected_tags) && r.selected_tags.length > 0
+                ? `Attributes: ${r.selected_tags.join(', ')}`
+                : 'Attributes: None selected';
+            const seedText = r.optional_text_seed ? `Context: ${r.optional_text_seed}` : '';
+            return `Category: ${r.category_name}\nScore: ${scoreText}\n${tagsText}\n${seedText}`.trim();
+        }).join('\n\n');
+
+        // 4. Build goal-aware sanitization prompt using compiled feedback text
         const goalType: string = (entry.audits as any)?.goal_type ?? null;
         const goalContext = goalType ? GOAL_CONTEXT[goalType] ?? '' : '';
 
@@ -55,7 +80,7 @@ Rewrite this feedback to:
 
 Output only the sanitized text — no preamble, no explanation:
 
-"${feedback}"`;
+"${compiledFeedback}"`;
 
         const response = await ai.models.generateContent({
             model: 'gemini-2.5-flash',
@@ -67,7 +92,7 @@ Output only the sanitized text — no preamble, no explanation:
             throw new Error('Failed to generate sanitized text');
         }
 
-        // 3. Generate Stripe Promo Code
+        // 5. Generate Stripe Promo Code (Preserving legacy stubs)
         let promoCodeString = null;
         const stripeKey = process.env.STRIPE_SECRET_KEY;
 
@@ -94,11 +119,11 @@ Output only the sanitized text — no preamble, no explanation:
             }
         }
 
-        // 4. Update Database
+        // 6. Update Database
         const { error: updateError } = await supabase
             .from('feedback_entries')
             .update({
-                original_text: feedback,
+                original_text: compiledFeedback,
                 sanitized_text: sanitizedText,
                 promo_code: promoCodeString,
                 status: 'submitted',
