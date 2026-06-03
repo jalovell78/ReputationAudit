@@ -4,6 +4,14 @@ This file acts as the single source of truth for all code updates, database sche
 
 ---
 
+## [2026-06-03] - Dynamic Multi-Tenant Report Route
+### Added
+- Created `ReportClientView.tsx` to handle client-side rendering of the report page with multi-tenant delegation, dynamic brand vocabularies ("reflection partners" under `perception_mirror` vs "raters" under `repstanding`), and responsive layout containers.
+
+### Changed
+- Refactored `src/app/report/[id]/page.tsx` into a Server Component that validates user authentication, directly queries Supabase for the audit and report data (to avoid client-side API requests on mount), handles threshold checking, and passes results as static props.
+- Refactored `PerceptionGapChart.tsx` to support dynamic styling, custom colors, axis styles, and legends matching active tenant attributes (Sage Green/Pastels vs Indigo/Emerald).
+
 ## [2026-06-02] - Domain Infrastructure & Multi-Brand Styling
 ### Added
 - Integrated Component Delegation for the landing page by generating `repstanding-hero.tsx` (baseline corporate executive coaching layout) and `perception-mirror-hero.tsx` (premium introspective editorial layout with serif typography, calm ambient glow, and generous whitespace) under `src/components/marketing/`.

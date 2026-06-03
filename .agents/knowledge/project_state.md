@@ -20,6 +20,7 @@
 
 ## Completed Features
 - **Multi-Tenant Landing Pages**: Split primary entry route `src/app/page.tsx` using full-page Component Delegation for `RepStanding` (corporate layout) and `The Perception Mirror` (introspective wellness layout).
+- **Multi-Tenant Report View Route**: Refactored the report view route (`src/app/report/[id]`) to use server-side tenant delegation, dynamic CSS variables/themes, dynamic typography, brand-aligned vocabulary, and a server-side data fetching model.
 - **User Authentication**: Secure signup with Full Name capture, integrated login/logout.
 - **Dashboard UI & Audit Flow**:
   - Overview of active/completed audits with real-time progress tracking.
