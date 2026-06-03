@@ -77,3 +77,5 @@ Other critical production utilities supporting business logic and external servi
 | `@hookform/resolvers` | `^5.2.2` | Links `react-hook-form` validation schemas to `zod`. |
 | `react-markdown` | `^10.1.0` | Safe rendering of markdown strings inside components (used to display synthesized AI reports). |
 | `recharts` | `^3.7.0` | Renders user audit statistics and feedback charts. **Note: Ensure charts are isolated inside client components ('use client') to prevent SSR fiber node mismatch errors.** |
+| `resend` | `^6.12.4` | For executing transactional email dispatch to raters using relationship-aware templates. |
+| `@vercel/functions` | `^3.6.1` | Provides the serverless runtime `waitUntil` utility to execute background promises without route blocking. |

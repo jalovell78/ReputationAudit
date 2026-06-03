@@ -4,6 +4,18 @@ This file acts as the single source of truth for all code updates, database sche
 
 ---
 
+## [2026-06-03] - Automated Multi-Tenant Email Dispatch via Resend API
+### Added
+- Installed `resend` SDK (`^6.12.4`) for direct transactional email delivery.
+- Installed `@vercel/functions` (`^3.6.1`) to utilize host runtime lifecycle helpers.
+
+### Changed
+- Refactored `src/app/api/create-audit/route.ts` to replace manual "Copy Link" email workflow with automated, non-blocking background email dispatch.
+- Integrated `waitUntil` from `@vercel/functions` to protect the asynchronous concurrent `Promise.all` mailing queue from Vercel container freezing.
+- Added dynamic platform sender spoofing depending on the audit container's active `platform_source` resolved via `getTenantFromHeaders()`.
+- Implemented absolute path fallbacks for email button anchors (e.g. `https://www.repstanding.com` or `https://www.theperceptionmirror.com`) with local development resolution.
+- Resolved creator's `full_name` from the `profiles` table to populate templates with professional relationship-aware signatures.
+
 ## [2026-06-03] - Multi-Tenant Onboarding Goals & Archetype Customization
 ### Added
 - Added `TenantArchetype` interface, `getArchetypes` helper, and `getArchetypeLabel` helper to `src/lib/tenant.ts` to support brand-specific roster selections and resolve legacy mapping.
