@@ -38,7 +38,7 @@ async function sendEmailsInBackground(
 
             const shareUrl = `${baseDomain}/rate/${entry.rater_link_id}`;
             const template = getRaterEmailTemplate(
-                goalType,
+                goalType ?? undefined,
                 entry.archetype_group || entry.archetype,
                 entry.rater_name,
                 shareUrl,
