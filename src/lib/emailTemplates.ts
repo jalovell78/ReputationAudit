@@ -160,22 +160,29 @@ export function getRaterEmailTemplate(
     shareUrl: string,
     userName?: string
 ): EmailTemplate {
-    // Normalize goal
-    const normalizedGoal: GrowthGoal = (goal as GrowthGoal) in TEMPLATES
-        ? (goal as GrowthGoal)
-        : "generic_audit";
+    // Normalize goal, mapping new multi-tenant keys to their closest legacy equivalents for template selection
+    let normalizedGoal: GrowthGoal = "generic_audit";
+    if (goal) {
+        if (goal === "executive_presence" || goal === "high_performance_leadership" || goal === "strategic_impact" || goal === "career_progression") {
+            normalizedGoal = "career_progression";
+        } else if (goal === "shadow_integration" || goal === "relational_resonance" || goal === "core_alignment" || goal === "conscious_presence") {
+            normalizedGoal = "personal_growth";
+        } else if ((goal as GrowthGoal) in TEMPLATES) {
+            normalizedGoal = goal as GrowthGoal;
+        }
+    }
 
     // Normalize archetype group
     // Map incoming archetypes to keys
     let key: RaterArchetype = "peer_colleague";
     const group = (archetypeGroup || "").toLowerCase();
 
-    if (group.includes("manager") || group.includes("leader") || group.includes("peer")) key = "peer_colleague";
+    if (group.includes("manager") || group.includes("leader") || group.includes("peer") || group.includes("collaborator") || group.includes("guide") || group.includes("mentor")) key = "peer_colleague";
     else if (group.includes("report")) key = "direct_report";
     else if (group.includes("client") || group.includes("customer")) key = "client_customer";
-    else if (group.includes("friend")) key = "close_friend";
+    else if (group.includes("friend") || group.includes("partner")) key = "close_friend";
     else if (group.includes("family")) key = "family_member";
-    else if (group.includes("critic") || group.includes("challenger")) key = "critic_challenger";
+    else if (group.includes("critic") || group.includes("challenger") || group.includes("loving_challenger")) key = "critic_challenger";
 
     const template = TEMPLATES[normalizedGoal][key];
     const closing = userName ? `\n\nThank you for your help,\n\n${userName}` : `\n\nThank you for your help.`;

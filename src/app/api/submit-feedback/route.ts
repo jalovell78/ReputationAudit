@@ -7,7 +7,17 @@ const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY as string });
 
 // Goal-specific framing for the sanitizer
 const GOAL_CONTEXT: Record<string, string> = {
-    career_progression: 'The person is focused on career advancement, executive presence, and professional trajectory. Frame insights through that lens.',
+    // New specific goals
+    executive_presence: 'The person is focused on executive presence, authority, upward management, and professional influence. Frame insights through that lens.',
+    high_performance_leadership: 'The person is focused on high-performance leadership, team empowerment, and operational accountability. Frame insights through that lens.',
+    strategic_impact: 'The person is focused on strategic impact, vision signaling, and innovation. Frame insights through that lens.',
+    career_progression: 'The person is focused on career progression velocity, visibility, and corporate optics. Frame insights through that lens.',
+    shadow_integration: 'The person is working on shadow integration, uncovering defense patterns, and blindspots. Frame insights through that lens.',
+    relational_resonance: 'The person is focused on relational resonance, somatic presence, and co-regulation. Frame insights through that lens.',
+    core_alignment: 'The person is focused on purpose, core alignment, and bridging intent with action. Frame insights through that lens.',
+    conscious_presence: 'The person is focused on conscious presence, authentic voice, and visibility. Frame insights through that lens.',
+
+    // Legacy fallbacks
     leadership_mastery: 'The person is developing leadership authority, psychological safety in their team, and influence. Frame insights through that lens.',
     personal_growth: 'The person is working on deep self-awareness, emotional patterns, and behavioural habits. Frame insights through that lens.',
     social_intelligence: 'The person is developing social perception, empathy, active listening, and relational skills. Frame insights through that lens.',
@@ -69,8 +79,10 @@ export async function POST(req: Request) {
         // 4. Build goal-aware sanitization prompt using compiled feedback text
         const goalType: string = (entry.audits as any)?.goal_type ?? null;
         const goalContext = goalType ? GOAL_CONTEXT[goalType] ?? '' : '';
+        const raterArchetype = entry.archetype || 'Unknown';
 
         const prompt = `You are an expert reputation analyst and psychological synthesizer.
+Relationship of Rater to Subject: ${raterArchetype}
 ${goalContext ? `CONTEXT: ${goalContext}` : ''}
 
 Rewrite this feedback to:

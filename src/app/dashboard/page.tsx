@@ -7,7 +7,7 @@ import { CheckoutButton } from "./CheckoutButton";
 import { LogoutButton } from "./LogoutButton";
 import { PredictionModule } from "./PredictionModule";
 import { GenerateReportButton } from "./GenerateReportButton";
-import { getTenantConfig } from "@/lib/tenant";
+import { getTenantConfig, getGoalLabel, getArchetypeLabel } from "@/lib/tenant";
 import { getTenantFromHeaders } from "@/lib/tenant-server";
 
 export default async function DashboardPage() {
@@ -86,7 +86,7 @@ export default async function DashboardPage() {
                                                 {isMirror ? "Reflection Request" : "Audit Request"}
                                                 {audit.goal_type && (
                                                     <Badge variant="outline" className="border-primary/30 text-primary bg-primary/10 hover:bg-primary/20">
-                                                        {audit.goal_type.split('_').map((word: string) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
+                                                        {getGoalLabel(audit.goal_type)}
                                                     </Badge>
                                                 )}
                                                 {isUnlocked && <Badge className="bg-emerald-500 text-black hover:bg-emerald-400">UNLOCKED</Badge>}
@@ -120,7 +120,7 @@ export default async function DashboardPage() {
                                         {audit.feedback_entries.map((entry: any) => (
                                             <div key={entry.id} className="p-3 rounded-md bg-secondary/40 border border-border/50 flex flex-col gap-2">
                                                 <div className="flex items-center justify-between">
-                                                    <span className="text-sm font-medium text-foreground">{entry.archetype}</span>
+                                                    <span className="text-sm font-medium text-foreground">{getArchetypeLabel(entry.archetype)}</span>
                                                     {entry.status === 'submitted' ? (
                                                         <Badge variant="outline" className="text-xs bg-emerald-500/10 text-emerald-450 border-emerald-500/20">Received</Badge>
                                                     ) : (

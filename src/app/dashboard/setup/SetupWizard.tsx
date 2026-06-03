@@ -7,69 +7,54 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
-import { Briefcase, Crown, Heart, Users, Plus, Trash2, ChevronRight, ChevronLeft, ArrowLeft } from "lucide-react";
+import { Briefcase, Crown, Heart, Users, Plus, Trash2, ChevronRight, ChevronLeft, ArrowLeft, Compass, Sparkles, Moon, Eye } from "lucide-react";
 import { useTenant } from "@/components/tenant-context";
 
-const ARCHETYPE_GROUP_OPTIONS = [
-    "Manager / Senior Leader",
-    "Peer / Colleague",
-    "Direct Report",
-    "Client / Customer",
-    "Close Friend",
-    "Family Member",
-    "Critic / Challenger",
-];
+// Bundler-safe static lookup dictionary to prevent tree-shaking
+const GOAL_ICON_MAP: Record<string, React.ComponentType<any>> = {
+    briefcase: Briefcase,
+    crown: Crown,
+    heart: Heart,
+    users: Users,
+    compass: Compass,
+    sparkles: Sparkles,
+    moon: Moon,
+    eye: Eye
+};
 
 type Rater = { name: string; email: string; archetype: string; archetype_group: string };
 
-function createEmptyRater(): Rater {
-    return { name: "", email: "", archetype: "Peer / Colleague", archetype_group: "peer" };
-}
-
 export function SetupWizard() {
     const router = useRouter();
+    const { tenant, config } = useTenant();
+    const isMirror = tenant === 'perception_mirror';
+
+    const defaultArch = config.archetypes?.[0] || { id: "peer", label: "Peer / Colleague" };
+
     const [step, setStep] = useState(0); // 0 = goal, 1 = raters
     const [selectedGoal, setSelectedGoal] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const [raters, setRaters] = useState<Rater[]>([createEmptyRater(), createEmptyRater(), createEmptyRater()]);
-    
-    const { tenant, config } = useTenant();
-    const isMirror = tenant === 'perception_mirror';
+    const [raters, setRaters] = useState<Rater[]>(() => [
+        { name: "", email: "", archetype: defaultArch.label, archetype_group: defaultArch.id },
+        { name: "", email: "", archetype: defaultArch.label, archetype_group: defaultArch.id },
+        { name: "", email: "", archetype: defaultArch.label, archetype_group: defaultArch.id }
+    ]);
 
-    const GOAL_OPTIONS = [
-        {
-            id: "career_progression",
-            icon: <Briefcase className="w-6 h-6" />,
-            label: isMirror ? "Professional Alignment" : "Career Progression",
-            desc: isMirror 
-                ? "Advance with alignment, build authentic presence, and signal collaborative readiness." 
-                : "Advance faster, build executive presence, and signal leadership readiness.",
-        },
-        {
-            id: "leadership_mastery",
-            icon: <Crown className="w-6 h-6" />,
-            label: isMirror ? "Conscious Leadership" : "Leadership Mastery",
-            desc: isMirror 
-                ? "Build collaborative authority, create deep trust, and lift team spirit." 
-                : "Build authority, create psychological safety, and amplify team performance.",
-        },
-        {
-            id: "personal_growth",
-            icon: <Heart className="w-6 h-6" />,
-            label: "Personal Growth",
-            desc: "Deepen self-awareness, break limiting patterns, and evolve your character.",
-        },
-        {
-            id: "social_intelligence",
-            icon: <Users className="w-6 h-6" />,
-            label: "Social Intelligence",
-            desc: "Master empathy, active listening, and authentic relational influence.",
-        },
-    ];
+    const GOAL_OPTIONS = config.goals.map((g) => {
+        const IconComponent = GOAL_ICON_MAP[g.iconName] || Briefcase;
+        return {
+            id: g.id,
+            icon: <IconComponent className="w-6 h-6" />,
+            label: g.label,
+            desc: g.description,
+        };
+    });
 
     const addRater = () => {
-        if (raters.length < 20) setRaters([...raters, createEmptyRater()]);
+        if (raters.length < 20) {
+            setRaters([...raters, { name: "", email: "", archetype: defaultArch.label, archetype_group: defaultArch.id }]);
+        }
     };
 
     const removeRater = (i: number) => {
@@ -231,20 +216,22 @@ export function SetupWizard() {
                                 <div>
                                     <Label className="text-muted-foreground text-xs uppercase tracking-wider mb-1 block">Role / Archetype</Label>
                                     <select
-                                        value={rater.archetype}
+                                        value={rater.archetype_group}
                                         onChange={(e) => {
                                             const val = e.target.value;
-                                            const group = val.toLowerCase().replace(/\s*\/\s*/g, "_").replace(/\s+/g, "_");
-                                            setRaters(prev => {
-                                                const updated = [...prev];
-                                                updated[index] = { ...updated[index], archetype: val, archetype_group: group };
-                                                return updated;
-                                            });
+                                            const found = config.archetypes.find(a => a.id === val);
+                                            if (found) {
+                                                setRaters(prev => {
+                                                    const updated = [...prev];
+                                                    updated[index] = { ...updated[index], archetype: found.label, archetype_group: found.id };
+                                                    return updated;
+                                                });
+                                            }
                                         }}
                                         className="w-full bg-background border border-input rounded-md px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
                                     >
-                                        {ARCHETYPE_GROUP_OPTIONS.map(opt => (
-                                            <option key={opt} value={opt}>{opt}</option>
+                                        {config.archetypes.map(a => (
+                                            <option key={a.id} value={a.id}>{a.label}</option>
                                         ))}
                                     </select>
                                 </div>

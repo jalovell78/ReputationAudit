@@ -2,11 +2,22 @@ import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { createClient as createServiceClient } from '@supabase/supabase-js';
 import { GoogleGenAI } from '@google/genai';
+import { getArchetypeLabel } from '@/lib/tenant';
 
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY as string });
 
 const GOAL_LABELS: Record<string, string> = {
-    career_progression: 'Career Progression',
+    // New specific goals
+    executive_presence: 'Executive Presence & Influence',
+    high_performance_leadership: 'High-Performance Leadership',
+    strategic_impact: 'Strategic Impact & Innovation',
+    career_progression: 'Career Progression Velocity',
+    shadow_integration: 'Shadow Integration & Blindspots',
+    relational_resonance: 'Relational Resonance & Empathy',
+    core_alignment: 'Purpose & Core Alignment',
+    conscious_presence: 'Conscious Presence & Expression',
+
+    // Legacy fallbacks
     leadership_mastery: 'Leadership Mastery',
     personal_growth: 'Personal Growth',
     social_intelligence: 'Social Intelligence',
@@ -45,9 +56,10 @@ async function synthesiseReport(
         if (texts.length <= 2) {
             smallGroupTexts.push(...texts);
         } else {
-            const consensusPrompt = `Synthesise these ${texts.length} perspectives from the "${group}" group into one definitive Consensus View. Preserve critical insights, note divergence. Output only the synthesis:\n\n${texts.map((t, i) => `Rater ${i + 1}: "${t}"`).join('\n\n')}`;
+            const groupLabel = getArchetypeLabel(group);
+            const consensusPrompt = `Synthesise these ${texts.length} perspectives from the "${groupLabel}" group into one definitive Consensus View. Preserve critical insights, note divergence. Output only the synthesis:\n\n${texts.map((t, i) => `Rater ${i + 1}: "${t}"`).join('\n\n')}`;
             const r = await ai.models.generateContent({ model: 'gemini-2.5-flash', contents: consensusPrompt });
-            aggregatedSections.push(`[${group} — Consensus of ${texts.length} raters]\n${r.text?.trim() ?? texts.join(' ')}`);
+            aggregatedSections.push(`[${groupLabel} — Consensus of ${texts.length} raters]\n${r.text?.trim() ?? texts.join(' ')}`);
         }
     }
 

@@ -24,7 +24,12 @@
 - **User Authentication**: Secure signup with Full Name capture, integrated login/logout.
 - **Dashboard UI & Audit Flow**:
   - Overview of active/completed audits with real-time progress tracking.
-  - Audit Setup Wizard: Goal selection and rater nomination (up to 20 emails).
+  - Audit Setup Wizard: Brand-specific goal selection (4 goals per brand) and dynamic rater nomination (6 custom archetypes per brand, supporting up to 20 emails).
+- **Multi-Tenant Onboarding Goals & Roster Builder Archetypes**:
+  - Replaced hardcoded goals and archetypes with brand-specific configurations driven dynamically by the central tenant config layer (`src/lib/tenant.ts`).
+  - Implemented static components dictionary lookup for Lucide icons to prevent tree-shaking optimizations in production Next.js builds.
+  - Developed centralized helpers (`getGoalLabel`, `getArchetypeLabel`) resolving both new brand-native keys and legacy historical data to avoid compilation or runtime page crashes.
+  - Ensured the AI sanitizer (`submit-feedback`) and report synthesizer (`generate-report`) use human-readable archetype labels during prompt compilation.
 - **Rater Feedback Interface**: Dynamic, anonymous, guided feedback form (Positive/Reflective/Critical).
 - **Feedback Sanitization**: AI-driven removal of identifying language from rater feedback to preserve anonymity.
 - **Dynamic Micro-Survey Response System**:

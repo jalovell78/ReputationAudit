@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { CopyIcon, MailIcon, CheckIcon } from "lucide-react";
 import { getRaterEmailTemplate } from "@/lib/emailTemplates";
+import { getArchetypeLabel } from "@/lib/tenant";
 import { useTenant } from "@/components/tenant-context";
 
 export function DispatchHubList({ entries, goalType, userName }: { entries: any[], goalType?: string, userName?: string }) {
@@ -52,7 +53,7 @@ export function DispatchHubList({ entries, goalType, userName }: { entries: any[
                     <div key={entry.id} className="p-5 rounded-lg bg-card border border-border flex flex-col gap-4">
                         <div className="flex flex-col md:flex-row justify-between md:items-center gap-2">
                             <div>
-                                <h3 className="font-serif font-semibold text-foreground">{entry.archetype}</h3>
+                                <h3 className="font-serif font-semibold text-foreground">{getArchetypeLabel(entry.archetype)}</h3>
                                 <p className="text-sm text-muted-foreground">{entry.rater_name} ({entry.rater_email})</p>
                             </div>
                             <div className="flex items-center gap-2">

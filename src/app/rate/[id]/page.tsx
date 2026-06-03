@@ -5,7 +5,17 @@ import { getTenantFromHeaders } from "@/lib/tenant-server";
 import { getTenantConfig } from "@/lib/tenant";
 
 const GOAL_TENANT_MAP: Record<string, 'repstanding' | 'perception_mirror'> = {
+    // New specific goals
+    executive_presence: 'repstanding',
+    high_performance_leadership: 'repstanding',
+    strategic_impact: 'repstanding',
     career_progression: 'repstanding',
+    shadow_integration: 'perception_mirror',
+    relational_resonance: 'perception_mirror',
+    core_alignment: 'perception_mirror',
+    conscious_presence: 'perception_mirror',
+
+    // Legacy fallbacks
     leadership_mastery: 'repstanding',
     personal_growth: 'perception_mirror',
     social_intelligence: 'perception_mirror',

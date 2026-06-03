@@ -4,6 +4,19 @@ This file acts as the single source of truth for all code updates, database sche
 
 ---
 
+## [2026-06-03] - Multi-Tenant Onboarding Goals & Archetype Customization
+### Added
+- Added `TenantArchetype` interface, `getArchetypes` helper, and `getArchetypeLabel` helper to `src/lib/tenant.ts` to support brand-specific roster selections and resolve legacy mapping.
+- Added brand-specific `archetypes` lists (6 corporate archetypes for `repstanding`, 6 wellness/introspective archetypes for `perception_mirror`) and `goals` configs in `src/lib/tenant.ts`.
+
+### Changed
+- Refactored `SetupWizard.tsx` to dynamically query goals and archetypes from the active tenant config, utilizing `GOAL_ICON_MAP` to prevent Next.js tree-shaking and dynamically initializing the roster using the tenant's primary archetype.
+- Updated `src/app/dashboard/page.tsx` and `src/app/dashboard/dispatch/[auditId]/DispatchHubList.tsx` to display human-readable archetype labels via `getArchetypeLabel`.
+- Updated `src/lib/emailTemplates.ts` to map new brand-specific goals and archetypes to legacy rater templates for email phrasing.
+- Updated `/api/submit-feedback` endpoint in `src/app/api/submit-feedback/route.ts` to pass the human-readable rater archetype (`entry.archetype`) to the sanitizer prompt context.
+- Updated `/api/generate-report/[id]` report compiler (`synthesiseReport`) to resolve raw archetype keys with `getArchetypeLabel` when generating consensus prompts.
+
+
 ## [2026-06-03] - Dynamic Micro-Survey & Rater Responses
 ### Added
 - Created database migration file `supabase/migrations/20260603120000_create_rater_responses.sql` defining `rater_responses` table (capturing `quantitative_score`, `selected_tags`, `optional_text_seed`), index, and owner `SELECT` RLS policy.

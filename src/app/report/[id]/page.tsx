@@ -4,7 +4,17 @@ import { getTenantFromHeaders } from "@/lib/tenant-server";
 import ReportClientView from "./ReportClientView";
 
 const GOAL_LABELS: Record<string, string> = {
-    career_progression: "Career Progression",
+    // New specific goals
+    executive_presence: "Executive Presence & Influence",
+    high_performance_leadership: "High-Performance Leadership",
+    strategic_impact: "Strategic Impact & Innovation",
+    career_progression: "Career Progression Velocity",
+    shadow_integration: "Shadow Integration & Blindspots",
+    relational_resonance: "Relational Resonance & Empathy",
+    core_alignment: "Purpose & Core Alignment",
+    conscious_presence: "Conscious Presence & Expression",
+
+    // Legacy fallbacks
     leadership_mastery: "Leadership Mastery",
     personal_growth: "Personal Growth",
     social_intelligence: "Social Intelligence",
